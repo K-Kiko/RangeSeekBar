@@ -155,7 +155,7 @@ public class RangeSeekBar extends View {
     //****************** the above is attr value  ******************//
 
     private boolean isEnable = true;
-    float touchDownX,touchDownY;
+    float touchDownX, touchDownY;
     //剩余最小间隔的进度
     float reservePercent;
     boolean isScaleThumb = false;
@@ -263,9 +263,9 @@ public class RangeSeekBar extends View {
 
         if (gravity == Gravity.TOP) {
             //calculate the height of indicator and thumb exceeds the part of the progress
-            float maxIndicatorHeight = 0;
-            if (leftSB.getIndicatorShowMode() != INDICATOR_ALWAYS_HIDE
-                    || rightSB.getIndicatorShowMode() != INDICATOR_ALWAYS_HIDE) {
+            float maxIndicatorHeight = Utils.dp2px(getContext(), 1);;
+            if ((leftSB.getIndicatorShowMode() != INDICATOR_ALWAYS_HIDE
+                    || rightSB.getIndicatorShowMode() != INDICATOR_ALWAYS_HIDE) && rightSB.getIndicatorGravity() == Gravity.TOP) {
                 maxIndicatorHeight = Math.max(leftSB.getIndicatorRawHeight(), rightSB.getIndicatorRawHeight());
             }
             float thumbHeight = Math.max(leftSB.getThumbScaleHeight(), rightSB.getThumbScaleHeight());
@@ -559,7 +559,7 @@ public class RangeSeekBar extends View {
 
     //calculate currTouchSB percent by MotionEvent
     protected float calculateCurrentSeekBarPercent(float touchDownX) {
-        if (currTouchSB == null)return 0;
+        if (currTouchSB == null) return 0;
         float percent = (touchDownX - getProgressLeft()) * 1f / (progressWidth);
         if (touchDownX < getProgressLeft()) {
             percent = 0;
@@ -976,6 +976,7 @@ public class RangeSeekBar extends View {
     /**
      * {@link #SEEKBAR_MODE_SINGLE} is single SeekBar
      * {@link #SEEKBAR_MODE_RANGE} is range SeekBar
+     *
      * @param seekBarMode
      */
     public void setSeekBarMode(@SeekBarModeDef int seekBarMode) {
@@ -990,6 +991,7 @@ public class RangeSeekBar extends View {
     /**
      * {@link #TICK_MARK_GRAVITY_LEFT} is number tick mark, it will locate the position according to the value.
      * {@link #TICK_MARK_GRAVITY_RIGHT} is text tick mark, it will be equally positioned.
+     *
      * @param tickMarkMode
      */
     public void setTickMarkMode(@TickMarkModeDef int tickMarkMode) {
@@ -1021,6 +1023,7 @@ public class RangeSeekBar extends View {
      * {@link #TICK_MARK_GRAVITY_LEFT}
      * {@link #TICK_MARK_GRAVITY_RIGHT}
      * {@link #TICK_MARK_GRAVITY_CENTER}
+     *
      * @param tickMarkGravity
      */
     public void setTickMarkGravity(@TickMarkGravityDef int tickMarkGravity) {
@@ -1167,6 +1170,7 @@ public class RangeSeekBar extends View {
     /**
      * the tick mark layout gravity
      * Gravity.TOP and Gravity.BOTTOM
+     *
      * @param tickMarkLayoutGravity
      */
     public void setTickMarkLayoutGravity(@TickMarkLayoutGravityDef int tickMarkLayoutGravity) {
@@ -1180,6 +1184,7 @@ public class RangeSeekBar extends View {
     /**
      * the RangeSeekBar gravity
      * Gravity.TOP and Gravity.BOTTOM
+     *
      * @param gravity
      */
     public void setGravity(@GravityDef int gravity) {

@@ -65,6 +65,7 @@ public class SeekBar {
     private float indicatorRadius;
     private int indicatorBackgroundColor;
     private int indicatorPaddingLeft, indicatorPaddingRight, indicatorPaddingTop, indicatorPaddingBottom;
+    private int indicatorGravity;
     private int thumbDrawableId;
     private int thumbInactivatedDrawableId;
     private int thumbWidth;
@@ -127,6 +128,7 @@ public class SeekBar {
         thumbHeight = (int) t.getDimension(R.styleable.RangeSeekBar_rsb_thumb_height, Utils.dp2px(getContext(), 26));
         thumbScaleRatio = t.getFloat(R.styleable.RangeSeekBar_rsb_thumb_scale_ratio, 1f);
         indicatorRadius = t.getDimension(R.styleable.RangeSeekBar_rsb_indicator_radius, 0f);
+        indicatorGravity = t.getInt(R.styleable.RangeSeekBar_rsb_indicator_gravity, RangeSeekBar.Gravity.TOP);
         t.recycle();
     }
 
@@ -292,27 +294,51 @@ public class SeekBar {
         }
 
         indicatorRect.left = (int) (scaleThumbWidth / 2f - realIndicatorWidth / 2f);
-        indicatorRect.top = bottom - realIndicatorHeight - scaleThumbHeight - indicatorMargin;
         indicatorRect.right = indicatorRect.left + realIndicatorWidth;
-        indicatorRect.bottom = indicatorRect.top + realIndicatorHeight;
+
+        if (indicatorGravity == RangeSeekBar.Gravity.TOP) {
+            indicatorRect.top = bottom - realIndicatorHeight - scaleThumbHeight - indicatorMargin;
+            indicatorRect.bottom = indicatorRect.top + realIndicatorHeight;
+        } else {
+            indicatorRect.top = bottom + indicatorMargin;
+            indicatorRect.bottom = bottom + realIndicatorHeight +  + indicatorMargin;
+        }
+
         //draw default indicator arrow
         if (indicatorBitmap == null) {
             //arrow three point
             //  b   c
             //    a
-            int ax = scaleThumbWidth / 2;
-            int ay = indicatorRect.bottom;
-            int bx = ax - indicatorArrowSize;
-            int by = ay - indicatorArrowSize;
-            int cx = ax + indicatorArrowSize;
+            int ax, ay, bx, by, cx;
+
+            if (indicatorGravity == RangeSeekBar.Gravity.TOP) {
+                ax = scaleThumbWidth / 2;
+                ay = indicatorRect.bottom;
+                bx = ax - indicatorArrowSize;
+                by = ay - indicatorArrowSize;
+                cx = ax + indicatorArrowSize;
+            } else {
+                ax = scaleThumbWidth / 2;
+                ay = indicatorRect.top;
+                bx = ax - indicatorArrowSize;
+                by = ay + indicatorArrowSize;
+                cx = ax + indicatorArrowSize;
+            }
+
             indicatorArrowPath.reset();
             indicatorArrowPath.moveTo(ax, ay);
             indicatorArrowPath.lineTo(bx, by);
             indicatorArrowPath.lineTo(cx, by);
             indicatorArrowPath.close();
             canvas.drawPath(indicatorArrowPath, paint);
-            indicatorRect.bottom -= indicatorArrowSize;
-            indicatorRect.top -= indicatorArrowSize;
+
+            if (indicatorGravity == RangeSeekBar.Gravity.TOP) {
+                indicatorRect.bottom -= indicatorArrowSize;
+                indicatorRect.top -= indicatorArrowSize;
+            } else {
+                indicatorRect.bottom += indicatorArrowSize;
+                indicatorRect.top += indicatorArrowSize;
+            }
         }
 
         //indicator background edge processing
@@ -497,6 +523,7 @@ public class SeekBar {
      * {@link #INDICATOR_ALWAYS_SHOW}
      * {@link #INDICATOR_ALWAYS_SHOW_AFTER_TOUCH}
      * {@link #INDICATOR_ALWAYS_SHOW}
+     *
      * @param indicatorShowMode
      */
     public void setIndicatorShowMode(@IndicatorModeDef int indicatorShowMode) {
@@ -512,10 +539,10 @@ public class SeekBar {
     }
 
     /**
-         * include indicator text Height、padding、margin
-         *
-         * @return The actual occupation height of indicator
-         */
+     * include indicator text Height、padding、margin
+     *
+     * @return The actual occupation height of indicator
+     */
     public int getIndicatorRawHeight() {
         if (indicatorHeight > 0) {
             if (indicatorBitmap != null) {
@@ -603,7 +630,7 @@ public class SeekBar {
     }
 
     public void setThumbDrawableId(@DrawableRes int thumbDrawableId) {
-        if (thumbWidth <= 0 || thumbHeight <= 0){
+        if (thumbWidth <= 0 || thumbHeight <= 0) {
             throw new IllegalArgumentException("please set thumbWidth and thumbHeight first!");
         }
         if (thumbDrawableId != 0 && getResources() != null) {
@@ -686,5 +713,9 @@ public class SeekBar {
     public float getProgress() {
         float range = rangeSeekBar.getMaxProgress() - rangeSeekBar.getMinProgress();
         return rangeSeekBar.getMinProgress() + range * currPercent;
+    }
+
+    public int getIndicatorGravity() {
+        return indicatorGravity;
     }
 }
